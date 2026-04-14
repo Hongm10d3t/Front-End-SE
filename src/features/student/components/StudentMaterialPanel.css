@@ -1,0 +1,71 @@
+.student-material-panel {
+    background: #fff;
+    border: 1px solid #e2e8f0;
+    border-radius: 22px;
+    padding: 20px;
+    box-shadow: 0 12px 30px rgba(15, 23, 42, 0.04);
+}
+
+.student-material-panel-header {
+    display: flex;
+    justify-content: space-between;
+    gap: 12px;
+    margin-bottom: 16px;
+}
+
+.student-material-panel-header h3 {
+    font-size: 22px;
+    color: #0f172a;
+}
+
+.student-material-panel-header p {
+    color: #64748b;
+}
+
+.student-material-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.student-material-item {
+    display: flex;
+    justify-content: space-between;
+    gap: 16px;
+    padding: 16px;
+    border-radius: 16px;
+    background: #f8fafc;
+    align-items: center;
+}
+
+.student-material-info {
+    flex: 1;
+}
+
+.student-material-info strong {
+    display: block;
+    margin-bottom: 6px;
+    color: #0f172a;
+}
+
+.student-material-info p {
+    color: #475569;
+    margin-bottom: 6px;
+    line-height: 1.6;
+}
+
+.student-material-info span {
+    color: #64748b;
+    font-size: 13px;
+}
+
+.student-material-no-link {
+    color: #94a3b8;
+    font-size: 13px;
+}
+
+.student-material-empty {
+    padding: 20px;
+    text-align: center;
+    color: #64748b;
+}

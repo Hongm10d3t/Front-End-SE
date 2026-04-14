@@ -1,0 +1,95 @@
+.course-table-wrapper {
+    width: 100%;
+    overflow-x: auto;
+    background: #fff;
+    border: 1px solid #e2e8f0;
+    border-radius: 20px;
+    box-shadow: 0 12px 32px rgba(15, 23, 42, 0.04);
+}
+
+.course-table {
+    width: 100%;
+    border-collapse: collapse;
+    min-width: 980px;
+}
+
+.course-table thead th {
+    text-align: left;
+    font-size: 13px;
+    font-weight: 700;
+    color: #475569;
+    padding: 16px 18px;
+    background: #f8fafc;
+    border-bottom: 1px solid #e2e8f0;
+}
+
+.course-table tbody td {
+    padding: 16px 18px;
+    border-bottom: 1px solid #eef2f7;
+    font-size: 14px;
+    vertical-align: middle;
+}
+
+.course-table tbody tr:hover {
+    background: #f8fbff;
+}
+
+.course-badge {
+    display: inline-flex;
+    padding: 7px 12px;
+    border-radius: 999px;
+    font-size: 12px;
+    font-weight: 700;
+}
+
+.course-badge.active {
+    background: #ecfdf5;
+    color: #15803d;
+}
+
+.course-badge.closed {
+    background: #fff7ed;
+    color: #c2410c;
+}
+
+.course-link-btn {
+    display: inline-block;
+    padding: 9px 12px;
+    border-radius: 10px;
+    background: #eff6ff;
+    color: #2563eb;
+    font-weight: 700;
+    font-size: 13px;
+}
+
+.course-actions {
+    display: flex;
+    gap: 8px;
+}
+
+.course-btn {
+    border: none;
+    border-radius: 10px;
+    padding: 9px 12px;
+    font-size: 13px;
+    font-weight: 700;
+    cursor: pointer;
+}
+
+.course-btn.edit {
+    background: #eff6ff;
+    color: #2563eb;
+}
+
+.course-btn.delete {
+    background: #fef2f2;
+    color: #dc2626;
+}
+
+.course-table-empty {
+    background: #fff;
+    border: 1px dashed #cbd5e1;
+    border-radius: 20px;
+    padding: 48px 24px;
+    text-align: center;
+}

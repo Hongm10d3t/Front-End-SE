@@ -1,0 +1,51 @@
+.term-modal {
+    width: 100%;
+    max-width: 720px;
+    background: #fff;
+    border-radius: 24px;
+    padding: 24px;
+    box-shadow: 0 30px 70px rgba(15, 23, 42, 0.2);
+}
+
+.term-modal-header {
+    display: flex;
+    justify-content: space-between;
+    gap: 16px;
+    margin-bottom: 22px;
+}
+
+.term-modal-header h3 {
+    font-size: 24px;
+    margin-bottom: 6px;
+}
+
+.term-modal-header p {
+    color: #64748b;
+}
+
+.term-modal-form {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+}
+
+.term-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 18px;
+}
+
+.term-checkbox {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-top: 10px;
+    font-weight: 600;
+    color: #1e293b;
+}
+
+@media (max-width: 768px) {
+    .term-grid {
+        grid-template-columns: 1fr;
+    }
+}

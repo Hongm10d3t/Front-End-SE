@@ -1,0 +1,11 @@
+.auth-layout-simple {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 40px 20px;
+    background:
+        radial-gradient(circle at top left, rgba(96, 165, 250, 0.16), transparent 28%),
+        radial-gradient(circle at bottom right, rgba(59, 130, 246, 0.14), transparent 24%),
+        #f8fafc;
+}

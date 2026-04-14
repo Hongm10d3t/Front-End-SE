@@ -1,0 +1,15 @@
+.teacher-form-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 18px;
+}
+
+.teacher-form-full {
+    grid-column: 1 / -1;
+}
+
+@media (max-width: 768px) {
+    .teacher-form-grid {
+        grid-template-columns: 1fr;
+    }
+}

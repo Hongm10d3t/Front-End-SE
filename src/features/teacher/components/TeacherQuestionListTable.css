@@ -1,0 +1,59 @@
+.teacher-question-list {
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+}
+
+.teacher-question-card {
+    background: #fff;
+    border: 1px solid #e2e8f0;
+    border-radius: 22px;
+    padding: 20px;
+    box-shadow: 0 12px 30px rgba(15, 23, 42, 0.04);
+}
+
+.teacher-question-card-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 14px;
+}
+
+.teacher-question-card h4 {
+    font-size: 18px;
+    color: #0f172a;
+    margin-bottom: 16px;
+    line-height: 1.6;
+}
+
+.teacher-option-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.teacher-option-item {
+    display: flex;
+    gap: 10px;
+    padding: 12px 14px;
+    border-radius: 14px;
+    background: #f8fafc;
+}
+
+.teacher-option-item span {
+    font-weight: 700;
+    color: #2563eb;
+}
+
+.teacher-option-item p {
+    color: #0f172a;
+    line-height: 1.6;
+}
+
+.teacher-question-footer {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-top: 16px;
+    color: #475569;
+}

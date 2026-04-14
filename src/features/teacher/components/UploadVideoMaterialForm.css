@@ -1,0 +1,29 @@
+.teacher-upload-form {
+    background: #fff;
+    border: 1px solid #e2e8f0;
+    border-radius: 22px;
+    padding: 20px;
+    box-shadow: 0 12px 30px rgba(15, 23, 42, 0.04);
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.teacher-upload-form-header h3 {
+    font-size: 22px;
+    color: #0f172a;
+    margin-bottom: 6px;
+}
+
+.teacher-upload-form-header p {
+    color: #64748b;
+}
+
+.teacher-upload-form textarea,
+.teacher-upload-form input {
+    width: 100%;
+    border: 1px solid #cbd5e1;
+    border-radius: 14px;
+    padding: 12px 14px;
+    outline: none;
+}

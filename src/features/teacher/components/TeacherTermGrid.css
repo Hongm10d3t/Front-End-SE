@@ -1,0 +1,55 @@
+.teacher-term-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(290px, 1fr));
+    gap: 20px;
+}
+
+.teacher-term-card {
+    background: #fff;
+    border: 1px solid #e2e8f0;
+    border-radius: 24px;
+    padding: 22px;
+    box-shadow: 0 12px 30px rgba(15, 23, 42, 0.04);
+}
+
+.teacher-term-card-top {
+    display: flex;
+    justify-content: flex-end;
+    margin-bottom: 16px;
+}
+
+.teacher-term-card h3 {
+    font-size: 24px;
+    color: #0f172a;
+    margin-bottom: 16px;
+}
+
+.teacher-term-meta {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 14px;
+    margin-bottom: 18px;
+}
+
+.teacher-term-meta span {
+    display: block;
+    color: #64748b;
+    font-size: 13px;
+    margin-bottom: 6px;
+}
+
+.teacher-term-meta strong {
+    color: #0f172a;
+}
+
+.teacher-primary-link {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 46px;
+    padding: 0 16px;
+    border-radius: 14px;
+    background: linear-gradient(135deg, #2563eb, #3b82f6);
+    color: #fff;
+    font-weight: 700;
+}

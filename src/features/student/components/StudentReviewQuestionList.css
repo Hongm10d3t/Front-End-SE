@@ -1,0 +1,79 @@
+.student-review-list {
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+}
+
+.student-review-card {
+    background: #fff;
+    border: 1px solid #e2e8f0;
+    border-radius: 22px;
+    padding: 20px;
+    box-shadow: 0 12px 30px rgba(15, 23, 42, 0.04);
+}
+
+.student-review-card-top {
+    display: flex;
+    justify-content: space-between;
+    gap: 14px;
+    align-items: center;
+    margin-bottom: 14px;
+}
+
+.student-review-left {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.student-review-right {
+    color: #475569;
+    font-size: 14px;
+}
+
+.student-review-card h4 {
+    font-size: 18px;
+    color: #0f172a;
+    margin-bottom: 16px;
+    line-height: 1.6;
+}
+
+.student-review-options {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.student-review-option {
+    display: flex;
+    gap: 10px;
+    padding: 12px 14px;
+    border-radius: 14px;
+    background: #f8fafc;
+    border: 1px solid transparent;
+}
+
+.student-review-option.selected {
+    border-color: #93c5fd;
+    background: #eff6ff;
+}
+
+.student-review-option.correct {
+    border-color: #86efac;
+    background: #ecfdf5;
+}
+
+.student-review-option span {
+    font-weight: 700;
+    color: #2563eb;
+}
+
+.student-review-option p {
+    color: #0f172a;
+    line-height: 1.6;
+}
+
+.student-review-explanation {
+    margin-top: 16px;
+    color: #475569;
+}

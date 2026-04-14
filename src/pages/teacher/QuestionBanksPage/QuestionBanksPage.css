@@ -1,0 +1,16 @@
+.teacher-header-actions {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+}
+
+.teacher-primary-btn {
+    border: none;
+    height: 46px;
+    padding: 0 16px;
+    border-radius: 14px;
+    background: linear-gradient(135deg, #2563eb, #3b82f6);
+    color: #fff;
+    font-weight: 700;
+    cursor: pointer;
+}

@@ -1,0 +1,26 @@
+.student-material-item-wrap {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.student-inline-btn {
+    border: none;
+    cursor: pointer;
+}
+
+.student-video-embed {
+    background: #fff;
+    border: 1px solid #e2e8f0;
+    border-radius: 16px;
+    padding: 12px;
+}
+
+.student-video-embed iframe,
+.student-video-embed video {
+    width: 100%;
+    min-height: 420px;
+    border: none;
+    border-radius: 12px;
+    background: #000;
+}

@@ -1,0 +1,66 @@
+.teacher-exam-detail {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.teacher-exam-summary-card {
+    background: #fff;
+    border: 1px solid #e2e8f0;
+    border-radius: 22px;
+    padding: 22px;
+    box-shadow: 0 12px 30px rgba(15, 23, 42, 0.04);
+}
+
+.teacher-exam-summary-top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 14px;
+    margin-bottom: 18px;
+}
+
+.teacher-exam-summary-top h3 {
+    font-size: 26px;
+    color: #0f172a;
+}
+
+.teacher-exam-summary-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+}
+
+.teacher-exam-summary-grid span {
+    display: block;
+    color: #64748b;
+    font-size: 13px;
+    margin-bottom: 6px;
+}
+
+.teacher-exam-summary-grid strong {
+    color: #0f172a;
+    line-height: 1.6;
+}
+
+.teacher-question-top-left {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.teacher-correct-answer {
+    color: #15803d;
+    font-weight: 600;
+}
+
+.teacher-option-item.correct {
+    border: 1px solid #86efac;
+    background: #ecfdf5;
+}
+
+@media (max-width: 900px) {
+    .teacher-exam-summary-grid {
+        grid-template-columns: 1fr;
+    }
+}

@@ -1,0 +1,55 @@
+.course-modal {
+    width: 100%;
+    max-width: 760px;
+    background: #fff;
+    border-radius: 24px;
+    padding: 24px;
+    box-shadow: 0 30px 70px rgba(15, 23, 42, 0.2);
+}
+
+.course-modal-header {
+    display: flex;
+    justify-content: space-between;
+    gap: 16px;
+    margin-bottom: 22px;
+}
+
+.course-modal-header h3 {
+    font-size: 24px;
+    margin-bottom: 6px;
+}
+
+.course-modal-header p {
+    color: #64748b;
+}
+
+.course-modal-form {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+}
+
+.course-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 18px;
+}
+
+.course-grid-full {
+    grid-column: 1 / -1;
+}
+
+.course-grid textarea {
+    width: 100%;
+    border: 1px solid #cbd5e1;
+    border-radius: 14px;
+    padding: 12px 14px;
+    outline: none;
+    resize: vertical;
+}
+
+@media (max-width: 768px) {
+    .course-grid {
+        grid-template-columns: 1fr;
+    }
+}

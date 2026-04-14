@@ -1,0 +1,60 @@
+.student-course-overview {
+    background: #fff;
+    border: 1px solid #e2e8f0;
+    border-radius: 24px;
+    padding: 22px;
+    box-shadow: 0 12px 30px rgba(15, 23, 42, 0.04);
+}
+
+.student-course-overview-header {
+    display: flex;
+    justify-content: space-between;
+    gap: 16px;
+    margin-bottom: 12px;
+}
+
+.student-course-overview-header h3 {
+    font-size: 28px;
+    color: #0f172a;
+    margin-bottom: 6px;
+}
+
+.student-course-overview-header p {
+    color: #64748b;
+}
+
+.student-course-overview-desc {
+    color: #475569;
+    line-height: 1.7;
+    margin-bottom: 16px;
+}
+
+.student-course-meta-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    margin-bottom: 18px;
+}
+
+.student-course-meta-grid span {
+    display: block;
+    font-size: 13px;
+    color: #64748b;
+    margin-bottom: 6px;
+}
+
+.student-course-meta-grid strong {
+    color: #0f172a;
+    line-height: 1.6;
+}
+
+.student-course-actions {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+}
+
+.student-primary-link.secondary {
+    background: #eff6ff;
+    color: #2563eb;
+}
