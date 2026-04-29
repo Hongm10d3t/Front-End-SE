@@ -39,15 +39,47 @@ export default function TeacherQuestionBanksPage() {
         fetchBanks();
     }, [courseId]);
 
+    // const handleCreateBank = async (formData) => {
+    //     try {
+    //         setSubmitting(true);
+    //         await createTeacherQuestionBankApi(courseId, formData);
+    //         setOpenCreateModal(false);
+    //         await fetchBanks();
+    //     } catch (error) {
+    //         console.error(error);
+    //         alert("Tạo question bank thất bại.");
+    //     } finally {
+    //         setSubmitting(false);
+    //     }
+    // };
     const handleCreateBank = async (formData) => {
         try {
             setSubmitting(true);
-            await createTeacherQuestionBankApi(courseId, formData);
+
+            const result = await createTeacherQuestionBankApi(courseId, formData);
+
+            if (result?.EC && result.EC !== 0) {
+                alert(result?.EM || "Tạo question bank thất bại.");
+                return;
+            }
+
             setOpenCreateModal(false);
             await fetchBanks();
+
+            alert(
+                formData.file
+                    ? "Tạo question bank và import CSV thành công."
+                    : "Tạo question bank thành công."
+            );
         } catch (error) {
             console.error(error);
-            alert("Tạo question bank thất bại.");
+
+            const message =
+                error?.response?.data?.EM ||
+                error?.response?.data?.message ||
+                "Tạo question bank thất bại.";
+
+            alert(message);
         } finally {
             setSubmitting(false);
         }

@@ -142,7 +142,7 @@ export default function UserFormModal({
                             />
                         </div>
 
-                        <div className="form-group">
+                        {/* <div className="form-group">
                             <label>Avatar URL</label>
                             <input
                                 name="avatarUrl"
@@ -150,7 +150,7 @@ export default function UserFormModal({
                                 onChange={handleChange}
                                 placeholder="https://..."
                             />
-                        </div>
+                        </div> */}
                     </div>
 
                     <div className="modal-actions">

@@ -1,7 +1,7 @@
 import { buildMaterialDisplayLink, formatDate } from "../teacher.helpers";
 import "./TeacherMaterialPanel.css";
 
-export default function TeacherMaterialPanel({ title, type, materials }) {
+export default function TeacherMaterialPanel({ title, type, materials, onDelete, }) {
     return (
         <div className="teacher-material-panel">
             <div className="teacher-material-panel-header">
@@ -38,6 +38,14 @@ export default function TeacherMaterialPanel({ title, type, materials }) {
                                     ) : (
                                         <span className="teacher-material-no-link">Chưa có link hiển thị</span>
                                     )}
+
+                                    <button
+                                        type="button"
+                                        className="teacher-danger-btn"
+                                        onClick={() => onDelete?.(material)}
+                                    >
+                                        Xóa
+                                    </button>
                                 </div>
                             </div>
                         );

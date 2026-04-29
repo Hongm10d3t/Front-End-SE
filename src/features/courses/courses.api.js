@@ -47,13 +47,31 @@ export async function getCourseMembersApi(courseId) {
     return raw?.data || raw?.DT || raw;
 }
 
-export async function addTeacherToCourseApi(courseId, teacherId) {
-    const response = await axiosClient.post(`/admin/course/${courseId}/teacher`, { teacherId });
+// export async function addTeacherToCourseApi(courseId, teacherId) {
+//     const response = await axiosClient.post(`/admin/course/${courseId}/teacher`, { teacherId });
+//     return response.data;
+// }
+export async function addTeacherToCourseApi(courseId, teacherIds) {
+    const response = await axiosClient.post(
+        `/admin/course/${courseId}/teacher`,
+        {
+            teacherIds,
+        }
+    );
     return response.data;
 }
 
-export async function addStudentToCourseApi(courseId, studentId) {
-    const response = await axiosClient.post(`/admin/course/${courseId}/student`, { studentId });
+// export async function addStudentToCourseApi(courseId, studentId) {
+//     const response = await axiosClient.post(`/admin/course/${courseId}/student`, { studentId });
+//     return response.data;
+// }
+export async function addStudentToCourseApi(courseId, studentIds) {
+    const response = await axiosClient.post(
+        `/admin/course/${courseId}/student`,
+        {
+            studentIds,
+        }
+    );
     return response.data;
 }
 

@@ -35,8 +35,9 @@ export default function LoginPage() {
 
             navigate(getRoleHomePath(user.role));
         } catch (error) {
-            setErrorMessage("Đăng nhập thất bại. Vui lòng kiểm tra lại tài khoản hoặc mật khẩu.");
-        } finally {
+            setErrorMessage(
+                error?.message || "Đăng nhập thất bại. Vui lòng kiểm tra lại tài khoản hoặc mật khẩu."
+            );
             setIsSubmitting(false);
         }
     };

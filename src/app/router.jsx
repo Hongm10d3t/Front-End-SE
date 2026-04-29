@@ -42,6 +42,8 @@ import StudentExamResultPage from "../pages/student/ExamResultPage/ExamResultPag
 import StudentExamHistoryPage from "../pages/student/ExamHistoryPage/ExamHistoryPage";
 import StudentVideoLearningPage from "../pages/student/VideoLearningPage/VideoLearningPage";
 import StudentDocumentsPage from "../pages/student/DocumentsPage/DocumentsPage";
+import TeacherStudentResultsPage from "../pages/teacher/StudentResultsPage/StudentResultsPage";
+import TeacherStudentExamAttemptsPage from "../pages/teacher/StudentExamAttemptsPage/StudentExamAttemptsPage";
 // function PlaceholderPage({ title }) {
 //     return (
 //         <div className="page-placeholder">
@@ -99,6 +101,15 @@ export default function AppRouter() {
                 <Route path="courses/:courseId/exams" element={<TeacherExamsPage />} />
                 <Route path="courses/:courseId/materials" element={<TeacherMaterialsPage />} />
                 <Route path="exams/:examId/detail" element={<TeacherExamDetailPage />} />
+                <Route
+                    path="courses/:courseId/students/:studentId/results"
+                    element={<TeacherStudentResultsPage />}
+                />
+
+                <Route
+                    path="courses/:courseId/students/:studentId/results/:examId"
+                    element={<TeacherStudentExamAttemptsPage />}
+                />
             </Route>
 
             <Route

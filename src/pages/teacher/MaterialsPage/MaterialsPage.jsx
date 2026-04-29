@@ -5,6 +5,7 @@ import {
     getTeacherVideoMaterialApi,
     uploadTeacherDocumentMaterialApi,
     uploadTeacherVideoMaterialApi,
+    deleteTeacherMaterialApi
 } from "../../../features/teacher/teacher.api";
 import TeacherMaterialPanel from "../../../features/teacher/components/TeacherMaterialPanel";
 import UploadVideoMaterialForm from "../../../features/teacher/components/UploadVideoMaterialForm";
@@ -70,6 +71,25 @@ export default function TeacherMaterialsPage() {
             setSubmittingDocument(false);
         }
     };
+    const handleDeleteMaterial = async (material) => {
+        const confirmed = window.confirm(
+            `Bạn có chắc muốn xóa tài liệu "${material.title}" không?`
+        );
+        if (!confirmed) return;
+
+        try {
+            await deleteTeacherMaterialApi(courseId, material._id);
+            await fetchMaterials();
+            alert("Xóa tài liệu thành công.");
+        } catch (error) {
+            console.error(error);
+            const message =
+                error?.response?.data?.EM ||
+                error?.response?.data?.message ||
+                "Xóa tài liệu thất bại.";
+            alert(message);
+        }
+    };
 
     return (
         <div className="teacher-page">
@@ -101,6 +121,7 @@ export default function TeacherMaterialsPage() {
                             title="Danh sách video"
                             type="video"
                             materials={videoMaterials}
+                            onDelete={handleDeleteMaterial}
                         />
                     )}
                 </div>
@@ -118,6 +139,7 @@ export default function TeacherMaterialsPage() {
                             title="Danh sách document"
                             type="document"
                             materials={documentMaterials}
+                            onDelete={handleDeleteMaterial}
                         />
                     )}
                 </div>

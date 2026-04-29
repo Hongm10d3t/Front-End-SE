@@ -57,19 +57,40 @@ export async function getTeacherQuestionBanksApi(courseId) {
     return toArray(response.data);
 }
 
+// export async function createTeacherQuestionBankApi(courseId, formData) {
+//     const payload = {
+//         title: formData.title,
+//         name: formData.title,
+//         description: formData.description || "",
+//     };
+
+//     const response = await axiosClient.post(
+//         `/teacher/course/${courseId}/questionbank`,
+//         payload
+//     );
+
+//     return unwrapResponse(response.data);
+// }
 export async function createTeacherQuestionBankApi(courseId, formData) {
-    const payload = {
-        title: formData.title,
-        name: formData.title,
-        description: formData.description || "",
-    };
+    const payload = new FormData();
+    payload.append("title", formData.title);
+    payload.append("description", formData.description || "");
+
+    if (formData.file) {
+        payload.append("file", formData.file);
+    }
 
     const response = await axiosClient.post(
         `/teacher/course/${courseId}/questionbank`,
-        payload
+        payload,
+        {
+            headers: {
+                "Content-Type": "multipart/form-data",
+            },
+        }
     );
 
-    return unwrapResponse(response.data);
+    return response.data;
 }
 
 export async function deleteTeacherQuestionBankApi(courseId, questionBankId) {
@@ -205,5 +226,27 @@ export async function uploadTeacherDocumentMaterialApi(courseId, formData) {
     );
 
 
+    return unwrapResponse(response.data);
+}
+
+
+export async function getTeacherStudentExamResultsApi(courseId, studentId) {
+    const response = await axiosClient.get(
+        `/teacher/course/${courseId}/student/${studentId}/exam-results`
+    );
+    return unwrapResponse(response.data);
+}
+
+export async function getTeacherStudentExamAttemptsApi(courseId, studentId, examId) {
+    const response = await axiosClient.get(
+        `/teacher/course/${courseId}/student/${studentId}/exam/${examId}/attempts`
+    );
+    return unwrapResponse(response.data);
+}
+
+export async function deleteTeacherMaterialApi(courseId, materialId) {
+    const response = await axiosClient.delete(
+        `/teacher/term/course/${courseId}/material/${materialId}`
+    );
     return unwrapResponse(response.data);
 }

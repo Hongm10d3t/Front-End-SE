@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import "./AssignMemberModal.css";
 
 export default function AssignMemberModal({
@@ -11,12 +11,23 @@ export default function AssignMemberModal({
     isSubmitting,
 }) {
     const [keyword, setKeyword] = useState("");
-    const [selectedId, setSelectedId] = useState("");
+    const [selectedIds, setSelectedIds] = useState([]);
+
+    useEffect(() => {
+        if (open) {
+            setKeyword("");
+            setSelectedIds([]);
+        }
+    }, [open]);
 
     const filteredUsers = useMemo(() => {
+        const search = keyword.toLowerCase();
+
         return users.filter((user) => {
-            const okRole = type === "teacher" ? user.role === "TEACHER" : user.role === "STUDENT";
-            const search = keyword.toLowerCase();
+            const okRole =
+                type === "teacher"
+                    ? user.role === "TEACHER"
+                    : user.role === "STUDENT";
 
             return (
                 okRole &&
@@ -31,11 +42,30 @@ export default function AssignMemberModal({
 
     if (!open) return null;
 
+    const handleToggleUser = (userId) => {
+        setSelectedIds((prev) =>
+            prev.includes(userId)
+                ? prev.filter((id) => id !== userId)
+                : [...prev, userId]
+        );
+    };
+
+    const handleSelectAllFiltered = () => {
+        const filteredIds = filteredUsers.map((user) => user._id);
+        setSelectedIds(filteredIds);
+    };
+
+    const handleClearSelection = () => {
+        setSelectedIds([]);
+    };
+
     const handleSubmit = async (event) => {
         event.preventDefault();
-        if (!selectedId) return;
-        await onSubmit(selectedId);
-        setSelectedId("");
+
+        if (!selectedIds.length) return;
+
+        await onSubmit(selectedIds);
+        setSelectedIds([]);
         setKeyword("");
     };
 
@@ -47,7 +77,12 @@ export default function AssignMemberModal({
                         <h3>{title}</h3>
                         <p>Chọn người dùng để thêm vào học phần.</p>
                     </div>
-                    <button className="modal-close-btn" onClick={onClose}>
+
+                    <button
+                        type="button"
+                        className="modal-close-btn"
+                        onClick={onClose}
+                    >
                         ×
                     </button>
                 </div>
@@ -61,16 +96,50 @@ export default function AssignMemberModal({
                         onChange={(e) => setKeyword(e.target.value)}
                     />
 
+                    <div
+                        style={{
+                            display: "flex",
+                            justifyContent: "space-between",
+                            alignItems: "center",
+                            marginBottom: 12,
+                            gap: 12,
+                            flexWrap: "wrap",
+                        }}
+                    >
+                        <span style={{ fontSize: 14, color: "#64748b" }}>
+                            Đã chọn: {selectedIds.length}
+                        </span>
+
+                        <div style={{ display: "flex", gap: 8 }}>
+                            <button
+                                type="button"
+                                className="btn-secondary"
+                                onClick={handleSelectAllFiltered}
+                                disabled={!filteredUsers.length}
+                            >
+                                Chọn tất cả
+                            </button>
+
+                            <button
+                                type="button"
+                                className="btn-secondary"
+                                onClick={handleClearSelection}
+                                disabled={!selectedIds.length}
+                            >
+                                Bỏ chọn
+                            </button>
+                        </div>
+                    </div>
+
                     <div className="assign-list">
                         {filteredUsers.map((user) => (
                             <label key={user._id} className="assign-item">
                                 <input
-                                    type="radio"
-                                    name="selectedUser"
-                                    value={user._id}
-                                    checked={selectedId === user._id}
-                                    onChange={(e) => setSelectedId(e.target.value)}
+                                    type="checkbox"
+                                    checked={selectedIds.includes(user._id)}
+                                    onChange={() => handleToggleUser(user._id)}
                                 />
+
                                 <div>
                                     <strong>{user.fullName || user.code}</strong>
                                     <p>{user.code} · {user.email || "--"}</p>
@@ -79,15 +148,26 @@ export default function AssignMemberModal({
                         ))}
 
                         {!filteredUsers.length ? (
-                            <div className="assign-empty">Không tìm thấy người dùng phù hợp.</div>
+                            <div className="assign-empty">
+                                Không tìm thấy người dùng phù hợp.
+                            </div>
                         ) : null}
                     </div>
 
                     <div className="modal-actions">
-                        <button type="button" className="btn-secondary" onClick={onClose}>
+                        <button
+                            type="button"
+                            className="btn-secondary"
+                            onClick={onClose}
+                        >
                             Hủy
                         </button>
-                        <button type="submit" className="btn-primary" disabled={isSubmitting || !selectedId}>
+
+                        <button
+                            type="submit"
+                            className="btn-primary"
+                            disabled={isSubmitting || !selectedIds.length}
+                        >
                             {isSubmitting ? "Đang thêm..." : "Xác nhận thêm"}
                         </button>
                     </div>

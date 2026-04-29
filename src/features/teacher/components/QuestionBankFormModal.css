@@ -38,3 +38,11 @@
     padding: 12px 14px;
     outline: none;
 }
+
+.question-bank-hint {
+    display: block;
+    margin-top: 8px;
+    color: #64748b;
+    font-size: 13px;
+    line-height: 1.5;
+}

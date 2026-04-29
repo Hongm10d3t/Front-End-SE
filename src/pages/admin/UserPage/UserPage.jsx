@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import {
     createUserApi,
     deleteUserApi,
@@ -12,6 +12,7 @@ import "./UserPage.css";
 export default function UsersPage() {
     const [users, setUsers] = useState([]);
     const [keyword, setKeyword] = useState("");
+    const [searchKeyword, setSearchKeyword] = useState("");
     const [roleFilter, setRoleFilter] = useState("ALL");
 
     const [loading, setLoading] = useState(true);
@@ -21,11 +22,52 @@ export default function UsersPage() {
     const [modalMode, setModalMode] = useState("create");
     const [selectedUser, setSelectedUser] = useState(null);
 
-    const fetchUsers = async () => {
+    const [page, setPage] = useState(1);
+    const [limit, setLimit] = useState(10);
+    const [pagination, setPagination] = useState({
+        page: 1,
+        limit: 10,
+        total: 0,
+        totalPages: 1,
+    });
+
+    const fetchUsers = async ({
+        currentPage = page,
+        currentLimit = limit,
+        currentKeyword = searchKeyword,
+        currentRole = roleFilter,
+    } = {}) => {
         try {
             setLoading(true);
-            const data = await getUsersApi();
-            setUsers(Array.isArray(data) ? data : []);
+
+            const result = await getUsersApi({
+                page: currentPage,
+                limit: currentLimit,
+                keyword: currentKeyword,
+                role: currentRole === "ALL" ? "" : currentRole,
+            });
+
+            // Backend mới: { items, pagination }
+            if (result?.items && result?.pagination) {
+                setUsers(Array.isArray(result.items) ? result.items : []);
+                setPagination({
+                    page: result.pagination.page || currentPage,
+                    limit: result.pagination.limit || currentLimit,
+                    total: result.pagination.total || 0,
+                    totalPages: result.pagination.totalPages || 1,
+                });
+                return;
+            }
+
+            // Fallback nếu backend vẫn trả mảng
+            const fallbackItems = Array.isArray(result) ? result : [];
+            setUsers(fallbackItems);
+            setPagination({
+                page: currentPage,
+                limit: currentLimit,
+                total: fallbackItems.length,
+                totalPages: 1,
+            });
         } catch (error) {
             console.error(error);
             alert("Không tải được danh sách người dùng.");
@@ -36,21 +78,31 @@ export default function UsersPage() {
 
     useEffect(() => {
         fetchUsers();
-    }, []);
+    }, [page, limit]);
 
-    const filteredUsers = useMemo(() => {
-        return users.filter((user) => {
-            const matchesKeyword =
-                !keyword ||
-                user.code?.toLowerCase().includes(keyword.toLowerCase()) ||
-                user.fullName?.toLowerCase().includes(keyword.toLowerCase()) ||
-                user.email?.toLowerCase().includes(keyword.toLowerCase());
+    const handleSearch = async () => {
+        setPage(1);
+        setSearchKeyword(keyword);
 
-            const matchesRole = roleFilter === "ALL" || user.role === roleFilter;
-
-            return matchesKeyword && matchesRole;
+        await fetchUsers({
+            currentPage: 1,
+            currentLimit: limit,
+            currentKeyword: keyword,
+            currentRole: roleFilter,
         });
-    }, [users, keyword, roleFilter]);
+    };
+
+    const handleFilterRole = async (nextRole) => {
+        setRoleFilter(nextRole);
+        setPage(1);
+
+        await fetchUsers({
+            currentPage: 1,
+            currentLimit: limit,
+            currentKeyword: searchKeyword,
+            currentRole: nextRole,
+        });
+    };
 
     const handleOpenCreate = () => {
         setModalMode("create");
@@ -74,16 +126,30 @@ export default function UsersPage() {
             setSubmitting(true);
 
             if (modalMode === "create") {
-                await createUserApi(formData);
+                const result = await createUserApi(formData);
+
+                if (result?.EC && result.EC !== 0) {
+                    alert(result?.EM || "Lưu người dùng thất bại.");
+                    return;
+                }
             } else {
-                await updateUserApi(selectedUser._id, formData);
+                const result = await updateUserApi(selectedUser._id, formData);
+
+                if (result?.EC && result.EC !== 0) {
+                    alert(result?.EM || "Lưu người dùng thất bại.");
+                    return;
+                }
             }
 
             handleCloseModal();
             await fetchUsers();
         } catch (error) {
             console.error(error);
-            alert("Lưu người dùng thất bại. Hãy kiểm tra lại API backend.");
+            const message =
+                error?.response?.data?.EM ||
+                error?.response?.data?.message ||
+                "Lưu người dùng thất bại. Hãy kiểm tra lại API backend.";
+            alert(message);
         } finally {
             setSubmitting(false);
         }
@@ -97,12 +163,30 @@ export default function UsersPage() {
         if (!confirmed) return;
 
         try {
-            await deleteUserApi(user._id);
+            const result = await deleteUserApi(user._id);
+
+            if (result?.EC && result.EC !== 0) {
+                alert(result?.EM || "Xóa người dùng thất bại.");
+                return;
+            }
+
             await fetchUsers();
         } catch (error) {
             console.error(error);
-            alert("Xóa người dùng thất bại.");
+            const message =
+                error?.response?.data?.EM ||
+                error?.response?.data?.message ||
+                "Xóa người dùng thất bại.";
+            alert(message);
         }
+    };
+
+    const handlePrevPage = () => {
+        setPage((prev) => Math.max(prev - 1, 1));
+    };
+
+    const handleNextPage = () => {
+        setPage((prev) => Math.min(prev + 1, pagination.totalPages || 1));
     };
 
     return (
@@ -126,27 +210,75 @@ export default function UsersPage() {
                         placeholder="Tìm theo mã, họ tên hoặc email..."
                         value={keyword}
                         onChange={(e) => setKeyword(e.target.value)}
+                        onKeyDown={(e) => {
+                            if (e.key === "Enter") {
+                                handleSearch();
+                            }
+                        }}
                     />
                 </div>
 
                 <div className="toolbar-filter">
-                    <select value={roleFilter} onChange={(e) => setRoleFilter(e.target.value)}>
+                    <select
+                        value={roleFilter}
+                        onChange={(e) => handleFilterRole(e.target.value)}
+                    >
                         <option value="ALL">Tất cả vai trò</option>
                         <option value="ADMIN">Quản trị viên</option>
                         <option value="TEACHER">Giảng viên</option>
                         <option value="STUDENT">Sinh viên</option>
                     </select>
                 </div>
+
+                <button
+                    type="button"
+                    className="search-user-btn"
+                    onClick={handleSearch}
+                >
+                    Tìm kiếm
+                </button>
+
+                <select
+                    className="limit-select"
+                    value={limit}
+                    onChange={(e) => {
+                        setLimit(Number(e.target.value));
+                        setPage(1);
+                    }}
+                >
+                    <option value={5}>5 / trang</option>
+                    <option value={10}>10 / trang</option>
+                    <option value={20}>20 / trang</option>
+                </select>
             </div>
 
             {loading ? (
                 <div className="users-loading-card">Đang tải danh sách người dùng...</div>
             ) : (
-                <UserTable
-                    users={filteredUsers}
-                    onEdit={handleOpenEdit}
-                    onDelete={handleDeleteUser}
-                />
+                <>
+                    <UserTable
+                        users={users}
+                        onEdit={handleOpenEdit}
+                        onDelete={handleDeleteUser}
+                    />
+
+                    <div className="users-pagination">
+                        <button onClick={handlePrevPage} disabled={page === 1}>
+                            ← Trước
+                        </button>
+
+                        <span>
+                            Trang {pagination.page} / {pagination.totalPages || 1}
+                        </span>
+
+                        <button
+                            onClick={handleNextPage}
+                            disabled={page >= (pagination.totalPages || 1)}
+                        >
+                            Sau →
+                        </button>
+                    </div>
+                </>
             )}
 
             <UserFormModal

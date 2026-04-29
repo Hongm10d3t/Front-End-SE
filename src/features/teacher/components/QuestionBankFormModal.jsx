@@ -4,6 +4,7 @@ import "./QuestionBankFormModal.css";
 const initialForm = {
     title: "",
     description: "",
+    file: null,
 };
 
 export default function QuestionBankFormModal({
@@ -33,7 +34,9 @@ export default function QuestionBankFormModal({
                 <div className="teacher-modal-header">
                     <div>
                         <h3>Tạo question bank</h3>
-                        <p>Nhập thông tin ngân hàng câu hỏi cho học phần.</p>
+                        <p>
+                            Nhập thông tin ngân hàng câu hỏi. Có thể chọn thêm file CSV để import ngay khi tạo.
+                        </p>
                     </div>
                     <button className="modal-close-btn" onClick={onClose}>
                         ×
@@ -63,6 +66,23 @@ export default function QuestionBankFormModal({
                             }
                             placeholder="Nhập mô tả ngắn"
                         />
+                    </div>
+
+                    <div className="form-group">
+                        <label>File CSV khởi tạo (tùy chọn)</label>
+                        <input
+                            type="file"
+                            accept=".csv"
+                            onChange={(e) =>
+                                setForm((prev) => ({
+                                    ...prev,
+                                    file: e.target.files?.[0] || null,
+                                }))
+                            }
+                        />
+                        <small className="question-bank-hint">
+                            Không chọn file thì hệ thống sẽ tạo ngân hàng câu hỏi rỗng như trước.
+                        </small>
                     </div>
 
                     <div className="modal-actions">

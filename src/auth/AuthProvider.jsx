@@ -39,11 +39,20 @@ export function AuthProvider({ children }) {
         bootstrap();
     }, []);
 
+    // const login = async ({ username, password }) => {
+    //     await loginApi({ username, password });
+    //     return await fetchCurrentUser();
+    // };
     const login = async ({ username, password }) => {
         await loginApi({ username, password });
-        return await fetchCurrentUser();
-    };
+        const currentUser = await fetchCurrentUser();
 
+        if (!currentUser) {
+            throw new Error("Không lấy được thông tin người dùng sau khi đăng nhập.");
+        }
+
+        return currentUser;
+    };
     const logout = async () => {
         try {
             await logoutApi();

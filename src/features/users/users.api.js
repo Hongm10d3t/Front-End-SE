@@ -11,11 +11,17 @@ function extractData(response) {
     return raw;
 }
 
-export async function getUsersApi() {
-    const response = await axiosClient.get("/admin/users");
-    return extractData(response) || [];
-}
+// export async function getUsersApi() {
+//     const response = await axiosClient.get("/admin/users");
+//     return extractData(response) || [];
+// }
+export async function getUsersApi(params = {}) {
+    const response = await axiosClient.get("/admin/users", {
+        params,
+    });
 
+    return response.data?.data;
+}
 export async function getUserDetailApi(userId) {
     const response = await axiosClient.get(`/admin/user/${userId}`);
     return response?.data?.data || response?.data?.DT || response?.data;

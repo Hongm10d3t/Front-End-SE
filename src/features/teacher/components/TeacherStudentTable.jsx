@@ -1,6 +1,7 @@
 import "./TeacherStudentTable.css";
+import { Link } from "react-router-dom";
 
-export default function TeacherStudentTable({ students }) {
+export default function TeacherStudentTable({ students, courseId }) {
     if (!students.length) {
         return (
             <div className="teacher-empty-card">
@@ -9,6 +10,7 @@ export default function TeacherStudentTable({ students }) {
             </div>
         );
     }
+    console.log(">>>>> danh sach student", students);
 
     return (
         <div className="teacher-table-wrapper">
@@ -20,6 +22,7 @@ export default function TeacherStudentTable({ students }) {
                         <th>Email</th>
                         <th>Khoa/Bộ môn</th>
                         <th>Trạng thái</th>
+                        <th>Kết quả học tập</th>
                     </tr>
                 </thead>
 
@@ -41,6 +44,14 @@ export default function TeacherStudentTable({ students }) {
                                 <span className={student.status === "ACTIVE" ? "teacher-badge active" : "teacher-badge"}>
                                     {student.status === "ACTIVE" ? "Đang hoạt động" : student.status || "--"}
                                 </span>
+                            </td>
+                            <td>
+                                <Link
+                                    className="teacher-inline-link"
+                                    to={`/teacher/courses/${courseId}/students/${student._id}/results`}
+                                >
+                                    Xem kết quả
+                                </Link>
                             </td>
                         </tr>
                     ))}

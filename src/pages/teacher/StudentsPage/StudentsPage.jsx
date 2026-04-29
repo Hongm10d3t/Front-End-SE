@@ -46,7 +46,8 @@ export default function TeacherStudentsPage() {
             {loading ? (
                 <div className="teacher-loading-card">Đang tải danh sách sinh viên...</div>
             ) : (
-                <TeacherStudentTable students={students} />
+                // <TeacherStudentTable students={students} />
+                <TeacherStudentTable students={students} courseId={courseId} />
             )}
         </div>
     );
