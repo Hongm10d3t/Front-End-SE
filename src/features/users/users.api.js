@@ -15,12 +15,41 @@ function extractData(response) {
 //     const response = await axiosClient.get("/admin/users");
 //     return extractData(response) || [];
 // }
+// export async function getUsersApi(params = {}) {
+//     const response = await axiosClient.get("/admin/users", {
+//         params,
+//     });
+
+//     return response.data?.data;
+// }
 export async function getUsersApi(params = {}) {
     const response = await axiosClient.get("/admin/users", {
         params,
     });
 
-    return response.data?.data;
+    const raw = response.data;
+
+    // Trường hợp backend trả: { EC: 0, data: [...] }
+    if (Array.isArray(raw?.data)) {
+        return raw.data;
+    }
+
+    // Trường hợp backend trả: { EC: 0, data: { items: [...], pagination: ... } }
+    if (Array.isArray(raw?.data?.items)) {
+        return raw.data.items;
+    }
+
+    // Trường hợp backend trả raw array luôn
+    if (Array.isArray(raw)) {
+        return raw;
+    }
+
+    // Trường hợp backend trả raw object { items, pagination }
+    if (Array.isArray(raw?.items)) {
+        return raw.items;
+    }
+
+    return [];
 }
 export async function getUserDetailApi(userId) {
     const response = await axiosClient.get(`/admin/user/${userId}`);

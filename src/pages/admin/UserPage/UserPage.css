@@ -155,3 +155,35 @@
     opacity: 0.5;
     cursor: not-allowed;
 }
+
+.limit-select {
+    min-height: 44px;
+    border-radius: 12px;
+    border: 1px solid #dbe3f0;
+    padding: 0 12px;
+    background: white;
+    font-weight: 600;
+}
+
+.users-pagination {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    gap: 12px;
+    margin-top: 16px;
+}
+
+.users-pagination button {
+    border: none;
+    background: #eaf1ff;
+    color: #2563eb;
+    font-weight: 700;
+    padding: 10px 14px;
+    border-radius: 10px;
+    cursor: pointer;
+}
+
+.users-pagination button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}

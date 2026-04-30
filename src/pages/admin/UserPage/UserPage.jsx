@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import {
     createUserApi,
     deleteUserApi,
@@ -12,7 +12,6 @@ import "./UserPage.css";
 export default function UsersPage() {
     const [users, setUsers] = useState([]);
     const [keyword, setKeyword] = useState("");
-    const [searchKeyword, setSearchKeyword] = useState("");
     const [roleFilter, setRoleFilter] = useState("ALL");
 
     const [loading, setLoading] = useState(true);
@@ -24,50 +23,21 @@ export default function UsersPage() {
 
     const [page, setPage] = useState(1);
     const [limit, setLimit] = useState(10);
-    const [pagination, setPagination] = useState({
-        page: 1,
-        limit: 10,
-        total: 0,
-        totalPages: 1,
-    });
 
-    const fetchUsers = async ({
-        currentPage = page,
-        currentLimit = limit,
-        currentKeyword = searchKeyword,
-        currentRole = roleFilter,
-    } = {}) => {
+    const fetchUsers = async () => {
         try {
             setLoading(true);
+            const data = await getUsersApi();
+            console.log("users api data =", data);
 
-            const result = await getUsersApi({
-                page: currentPage,
-                limit: currentLimit,
-                keyword: currentKeyword,
-                role: currentRole === "ALL" ? "" : currentRole,
-            });
-
-            // Backend mới: { items, pagination }
-            if (result?.items && result?.pagination) {
-                setUsers(Array.isArray(result.items) ? result.items : []);
-                setPagination({
-                    page: result.pagination.page || currentPage,
-                    limit: result.pagination.limit || currentLimit,
-                    total: result.pagination.total || 0,
-                    totalPages: result.pagination.totalPages || 1,
-                });
+            // nếu backend trả object { items, pagination }
+            if (data?.items) {
+                setUsers(Array.isArray(data.items) ? data.items : []);
                 return;
             }
 
-            // Fallback nếu backend vẫn trả mảng
-            const fallbackItems = Array.isArray(result) ? result : [];
-            setUsers(fallbackItems);
-            setPagination({
-                page: currentPage,
-                limit: currentLimit,
-                total: fallbackItems.length,
-                totalPages: 1,
-            });
+            // nếu backend trả thẳng mảng
+            setUsers(Array.isArray(data) ? data : []);
         } catch (error) {
             console.error(error);
             alert("Không tải được danh sách người dùng.");
@@ -78,31 +48,36 @@ export default function UsersPage() {
 
     useEffect(() => {
         fetchUsers();
-    }, [page, limit]);
+    }, []);
 
-    const handleSearch = async () => {
-        setPage(1);
-        setSearchKeyword(keyword);
+    const filteredUsers = useMemo(() => {
+        return users.filter((user) => {
+            const search = keyword.trim().toLowerCase();
 
-        await fetchUsers({
-            currentPage: 1,
-            currentLimit: limit,
-            currentKeyword: keyword,
-            currentRole: roleFilter,
+            const matchesKeyword =
+                !search ||
+                (user.code || "").toLowerCase().includes(search) ||
+                (user.fullName || "").toLowerCase().includes(search) ||
+                (user.email || "").toLowerCase().includes(search);
+
+            const matchesRole =
+                roleFilter === "ALL" || user.role === roleFilter;
+
+            return matchesKeyword && matchesRole;
         });
-    };
+    }, [users, keyword, roleFilter]);
 
-    const handleFilterRole = async (nextRole) => {
-        setRoleFilter(nextRole);
+    const totalPages = Math.max(1, Math.ceil(filteredUsers.length / limit));
+
+    const paginatedUsers = useMemo(() => {
+        const start = (page - 1) * limit;
+        const end = start + limit;
+        return filteredUsers.slice(start, end);
+    }, [filteredUsers, page, limit]);
+
+    useEffect(() => {
         setPage(1);
-
-        await fetchUsers({
-            currentPage: 1,
-            currentLimit: limit,
-            currentKeyword: searchKeyword,
-            currentRole: nextRole,
-        });
-    };
+    }, [keyword, roleFilter, limit]);
 
     const handleOpenCreate = () => {
         setModalMode("create");
@@ -148,7 +123,7 @@ export default function UsersPage() {
             const message =
                 error?.response?.data?.EM ||
                 error?.response?.data?.message ||
-                "Lưu người dùng thất bại. Hãy kiểm tra lại API backend.";
+                "Lưu người dùng thất bại.";
             alert(message);
         } finally {
             setSubmitting(false);
@@ -186,7 +161,7 @@ export default function UsersPage() {
     };
 
     const handleNextPage = () => {
-        setPage((prev) => Math.min(prev + 1, pagination.totalPages || 1));
+        setPage((prev) => Math.min(prev + 1, totalPages));
     };
 
     return (
@@ -210,18 +185,13 @@ export default function UsersPage() {
                         placeholder="Tìm theo mã, họ tên hoặc email..."
                         value={keyword}
                         onChange={(e) => setKeyword(e.target.value)}
-                        onKeyDown={(e) => {
-                            if (e.key === "Enter") {
-                                handleSearch();
-                            }
-                        }}
                     />
                 </div>
 
                 <div className="toolbar-filter">
                     <select
                         value={roleFilter}
-                        onChange={(e) => handleFilterRole(e.target.value)}
+                        onChange={(e) => setRoleFilter(e.target.value)}
                     >
                         <option value="ALL">Tất cả vai trò</option>
                         <option value="ADMIN">Quản trị viên</option>
@@ -230,21 +200,10 @@ export default function UsersPage() {
                     </select>
                 </div>
 
-                <button
-                    type="button"
-                    className="search-user-btn"
-                    onClick={handleSearch}
-                >
-                    Tìm kiếm
-                </button>
-
                 <select
                     className="limit-select"
                     value={limit}
-                    onChange={(e) => {
-                        setLimit(Number(e.target.value));
-                        setPage(1);
-                    }}
+                    onChange={(e) => setLimit(Number(e.target.value))}
                 >
                     <option value={5}>5 / trang</option>
                     <option value={10}>10 / trang</option>
@@ -257,7 +216,7 @@ export default function UsersPage() {
             ) : (
                 <>
                     <UserTable
-                        users={users}
+                        users={paginatedUsers}
                         onEdit={handleOpenEdit}
                         onDelete={handleDeleteUser}
                     />
@@ -268,12 +227,12 @@ export default function UsersPage() {
                         </button>
 
                         <span>
-                            Trang {pagination.page} / {pagination.totalPages || 1}
+                            Trang {page} / {totalPages}
                         </span>
 
                         <button
                             onClick={handleNextPage}
-                            disabled={page >= (pagination.totalPages || 1)}
+                            disabled={page === totalPages}
                         >
                             Sau →
                         </button>
