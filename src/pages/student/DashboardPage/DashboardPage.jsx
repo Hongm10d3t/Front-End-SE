@@ -1,6 +1,23 @@
 import { Link } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { getStudentAnnouncementsApi } from "../../../features/announcements/announcements.api";
+import AnnouncementList from "../../../features/announcements/components/AnnouncementList";
 
 export default function StudentDashboardPage() {
+    const [announcements, setAnnouncements] = useState([]);
+
+    useEffect(() => {
+        const fetchAnnouncements = async () => {
+            try {
+                const data = await getStudentAnnouncementsApi();
+                setAnnouncements(Array.isArray(data) ? data : []);
+            } catch (error) {
+                console.error(error);
+            }
+        };
+
+        fetchAnnouncements();
+    }, []);
     return (
         <div className="content-card">
             <h2>Trang tổng quan sinh viên</h2>
@@ -25,6 +42,11 @@ export default function StudentDashboardPage() {
                 >
                     Đi tới kỳ học của tôi
                 </Link>
+                <AnnouncementList
+                    title="Thông báo mới"
+                    announcements={announcements}
+                    emptyText="Hiện chưa có thông báo nào dành cho sinh viên."
+                />
             </div>
         </div>
     );

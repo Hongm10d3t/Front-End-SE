@@ -1,11 +1,14 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import {
     getStudentExamAttemptDetailApi,
     submitStudentExamApi,
     updateStudentAnswerApi,
 } from "../../../features/student/student.api";
-import { extractAttemptQuestions, getAttemptQuestionId } from "../../../features/student/student.helpers";
+import {
+    extractAttemptQuestions,
+    getAttemptQuestionId,
+} from "../../../features/student/student.helpers";
 import StudentExamQuestionPanel from "../../../features/student/components/StudentExamQuestionPanel";
 import StudentExamSidebar from "../../../features/student/components/StudentExamSidebar";
 import "./DoingExamPage.css";
@@ -20,10 +23,54 @@ export default function StudentDoingExamPage() {
     const [submitting, setSubmitting] = useState(false);
     const [savingAnswer, setSavingAnswer] = useState(false);
 
+    const [remainingSeconds, setRemainingSeconds] = useState(0);
+    const [isAutoSubmitting, setIsAutoSubmitting] = useState(false);
+    const [timerReady, setTimerReady] = useState(false);
+
+    const hasSubmittedRef = useRef(false);
+
+    const questions = useMemo(() => extractAttemptQuestions(attempt), [attempt]);
+    const currentQuestion = questions[currentIndex];
+
+    const durationMinutes = useMemo(() => {
+        if (!attempt) return 0;
+
+        const raw =
+            attempt.examId?.durationMinutes ??
+            attempt.durationMinutes ??
+            attempt.duration ??
+            0;
+
+        const parsed = Number(raw);
+        return Number.isFinite(parsed) ? parsed : 0;
+    }, [attempt]);
+
+    const getDeadlineStorageKey = () => `student_exam_deadline_${examAttemptId}`;
+
+    const formatRemainingTime = (totalSeconds) => {
+        const safe = Math.max(0, totalSeconds);
+        const hours = Math.floor(safe / 3600);
+        const minutes = Math.floor((safe % 3600) / 60);
+        const seconds = safe % 60;
+
+        if (hours > 0) {
+            return `${String(hours).padStart(2, "0")}:${String(minutes).padStart(
+                2,
+                "0"
+            )}:${String(seconds).padStart(2, "0")}`;
+        }
+
+        return `${String(minutes).padStart(2, "0")}:${String(seconds).padStart(
+            2,
+            "0"
+        )}`;
+    };
+
     const fetchAttempt = async () => {
         try {
             setLoading(true);
             const data = await getStudentExamAttemptDetailApi(examAttemptId);
+            console.log("attempt detail update =", data);
             setAttempt(data || null);
         } catch (error) {
             console.error(error);
@@ -37,8 +84,62 @@ export default function StudentDoingExamPage() {
         fetchAttempt();
     }, [examAttemptId]);
 
-    const questions = useMemo(() => extractAttemptQuestions(attempt), [attempt]);
-    const currentQuestion = questions[currentIndex];
+    useEffect(() => {
+        setTimerReady(false);
+        hasSubmittedRef.current = false;
+    }, [examAttemptId]);
+
+    // Khởi tạo deadline local theo đúng duration của đề thi
+    useEffect(() => {
+        if (!attempt) return;
+        if (!durationMinutes) return;
+
+        const deadlineKey = getDeadlineStorageKey();
+        const savedDeadline = Number(sessionStorage.getItem(deadlineKey));
+
+        let deadline;
+
+        if (Number.isFinite(savedDeadline) && savedDeadline > Date.now()) {
+            deadline = savedDeadline;
+        } else {
+            deadline = Date.now() + durationMinutes * 60 * 1000;
+            sessionStorage.setItem(deadlineKey, String(deadline));
+        }
+
+        const nextRemaining = Math.max(
+            0,
+            Math.floor((deadline - Date.now()) / 1000)
+        );
+
+        setRemainingSeconds(nextRemaining);
+        setTimerReady(true);
+    }, [attempt, durationMinutes, examAttemptId]);
+
+    // Đồng hồ đếm ngược
+    useEffect(() => {
+        if (!attempt) return;
+        if (!durationMinutes) return;
+        if (!timerReady) return;
+        if (hasSubmittedRef.current) return;
+
+        const deadlineKey = getDeadlineStorageKey();
+
+        const tick = () => {
+            const deadline = Number(sessionStorage.getItem(deadlineKey));
+            if (!Number.isFinite(deadline)) return;
+
+            const nextRemaining = Math.max(
+                0,
+                Math.floor((deadline - Date.now()) / 1000)
+            );
+            setRemainingSeconds(nextRemaining);
+        };
+
+        tick();
+        const timer = setInterval(tick, 1000);
+
+        return () => clearInterval(timer);
+    }, [attempt, durationMinutes, timerReady, examAttemptId]);
 
     const handleChooseAnswer = async (selectedAnswer) => {
         const questionId = getAttemptQuestionId(currentQuestion);
@@ -79,21 +180,61 @@ export default function StudentDoingExamPage() {
         }
     };
 
-    const handleSubmitExam = async () => {
-        const confirmed = window.confirm("Bạn có chắc muốn nộp bài?");
+    const handleSubmitExam = async ({ auto = false } = {}) => {
+        if (hasSubmittedRef.current) return;
+
+        const confirmed = auto
+            ? true
+            : window.confirm("Bạn có chắc muốn nộp bài không?");
+
         if (!confirmed) return;
 
         try {
+            hasSubmittedRef.current = true;
             setSubmitting(true);
+
+            if (auto) {
+                setIsAutoSubmitting(true);
+            }
+
             await submitStudentExamApi(examAttemptId);
+
+            sessionStorage.removeItem(`attempt_duration_${examAttemptId}`);
+            sessionStorage.removeItem(getDeadlineStorageKey());
+
+            if (auto) {
+                alert("Đã hết thời gian làm bài. Hệ thống đã tự động nộp bài.");
+            } else {
+                alert("Nộp bài thành công.");
+            }
+
             navigate(`/student/exam-attempts/${examAttemptId}/result`);
         } catch (error) {
             console.error(error);
-            alert("Nộp bài thất bại.");
-        } finally {
+
+            hasSubmittedRef.current = false;
             setSubmitting(false);
+            setIsAutoSubmitting(false);
+
+            const message =
+                error?.response?.data?.EM ||
+                error?.response?.data?.message ||
+                "Nộp bài thất bại.";
+
+            alert(message);
         }
     };
+
+    // Hết giờ thì tự nộp
+    useEffect(() => {
+        if (!attempt) return;
+        if (!durationMinutes) return;
+        if (!timerReady) return;
+        if (remainingSeconds !== 0) return;
+        if (hasSubmittedRef.current) return;
+
+        handleSubmitExam({ auto: true });
+    }, [remainingSeconds, attempt, durationMinutes, timerReady]);
 
     if (loading) {
         return <div className="student-loading-card">Đang tải bài thi...</div>;
@@ -105,17 +246,39 @@ export default function StudentDoingExamPage() {
                 <div className="student-page-header">
                     <div>
                         <span className="page-chip">Sinh viên / Làm bài thi</span>
-                        <h2>{attempt?.title || attempt?.examTitle || "Bài thi"}</h2>
+                        <h2>{attempt?.title || attempt?.examTitle || attempt?.examId?.title || "Bài thi"}</h2>
                         <p>Chọn đáp án cho từng câu hỏi và nộp bài khi hoàn thành.</p>
                     </div>
 
-                    <button
-                        className="student-primary-btn"
-                        onClick={handleSubmitExam}
-                        disabled={submitting}
-                    >
-                        {submitting ? "Đang nộp bài..." : "Nộp bài"}
-                    </button>
+                    <div className="student-exam-header-actions">
+                        <div
+                            className={`student-exam-timer ${remainingSeconds <= 60 ? "danger" : ""
+                                }`}
+                        >
+                            {durationMinutes ? (
+                                <>
+                                    Thời gian còn lại:{" "}
+                                    <strong>{formatRemainingTime(remainingSeconds)}</strong>
+                                </>
+                            ) : (
+                                <>
+                                    Thời gian: <strong>Không giới hạn</strong>
+                                </>
+                            )}
+                        </div>
+
+                        <button
+                            className="student-primary-btn"
+                            onClick={() => handleSubmitExam()}
+                            disabled={submitting || isAutoSubmitting}
+                        >
+                            {isAutoSubmitting
+                                ? "Đang tự nộp..."
+                                : submitting
+                                    ? "Đang nộp bài..."
+                                    : "Nộp bài"}
+                        </button>
+                    </div>
                 </div>
 
                 <StudentExamQuestionPanel
@@ -123,7 +286,7 @@ export default function StudentDoingExamPage() {
                     index={currentIndex}
                     total={questions.length}
                     onChooseAnswer={handleChooseAnswer}
-                    disabled={savingAnswer}
+                    disabled={savingAnswer || submitting || isAutoSubmitting}
                 />
 
                 <div className="student-exam-navigation">
@@ -138,7 +301,9 @@ export default function StudentDoingExamPage() {
                     <button
                         className="student-nav-btn primary"
                         onClick={() =>
-                            setCurrentIndex((prev) => Math.min(questions.length - 1, prev + 1))
+                            setCurrentIndex((prev) =>
+                                Math.min(questions.length - 1, prev + 1)
+                            )
                         }
                         disabled={currentIndex === questions.length - 1}
                     >

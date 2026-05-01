@@ -1,6 +1,23 @@
 import { Link } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { getTeacherAnnouncementsApi } from "../../../features/announcements/announcements.api";
+import AnnouncementList from "../../../features/announcements/components/AnnouncementList";
 
 export default function TeacherDashboardPage() {
+    const [announcements, setAnnouncements] = useState([]);
+
+    useEffect(() => {
+        const fetchAnnouncements = async () => {
+            try {
+                const data = await getTeacherAnnouncementsApi();
+                setAnnouncements(Array.isArray(data) ? data : []);
+            } catch (error) {
+                console.error(error);
+            }
+        };
+
+        fetchAnnouncements();
+    }, []);
     return (
         <div className="content-card">
             <h2>Trang tổng quan giảng viên</h2>
@@ -26,6 +43,12 @@ export default function TeacherDashboardPage() {
                 >
                     Đi tới kỳ học của tôi
                 </Link>
+                <AnnouncementList
+                    title="Thông báo mới"
+                    announcements={announcements}
+                    emptyText="Hiện chưa có thông báo nào dành cho giảng viên."
+                />
+
             </div>
         </div>
     );

@@ -44,14 +44,8 @@ import StudentVideoLearningPage from "../pages/student/VideoLearningPage/VideoLe
 import StudentDocumentsPage from "../pages/student/DocumentsPage/DocumentsPage";
 import TeacherStudentResultsPage from "../pages/teacher/StudentResultsPage/StudentResultsPage";
 import TeacherStudentExamAttemptsPage from "../pages/teacher/StudentExamAttemptsPage/StudentExamAttemptsPage";
-// function PlaceholderPage({ title }) {
-//     return (
-//         <div className="page-placeholder">
-//             <h2>{title}</h2>
-//             <p>Trang này mình sẽ xây tiếp ở bước sau.</p>
-//         </div>
-//     );
-// }
+import AnnouncementsPage from "../pages/admin/AnnouncementsPage/AnnouncementsPage";
+
 
 export default function AppRouter() {
     return (
@@ -80,6 +74,7 @@ export default function AppRouter() {
                 <Route path="terms" element={<TermsPage />} />
                 <Route path="terms/:termId/courses" element={<CoursesPage />} />
                 <Route path="courses/:courseId/members" element={<CourseMembersPage />} />
+                <Route path="announcements" element={<AnnouncementsPage />} />
             </Route>
             <Route
                 path="/teacher"
