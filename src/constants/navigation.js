@@ -2,10 +2,10 @@ export const adminNavItems = [
     { label: "Tổng quan", path: "/admin" },
     { label: "Người dùng", path: "/admin/users" },
     { label: "Kỳ học", path: "/admin/terms" },
-    {
-        label: "Thông báo",
-        path: "/admin/announcements",
-    },
+    // {
+    //     label: "Thông báo",
+    //     path: "/admin/announcements",
+    // },
 ];
 
 export const teacherNavItems = [

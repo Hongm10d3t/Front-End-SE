@@ -42,11 +42,11 @@ export default function StudentDashboardPage() {
                 >
                     Đi tới kỳ học của tôi
                 </Link>
-                <AnnouncementList
+                {/* <AnnouncementList
                     title="Thông báo mới"
                     announcements={announcements}
                     emptyText="Hiện chưa có thông báo nào dành cho sinh viên."
-                />
+                /> */}
             </div>
         </div>
     );

@@ -45,6 +45,8 @@ import StudentDocumentsPage from "../pages/student/DocumentsPage/DocumentsPage";
 import TeacherStudentResultsPage from "../pages/teacher/StudentResultsPage/StudentResultsPage";
 import TeacherStudentExamAttemptsPage from "../pages/teacher/StudentExamAttemptsPage/StudentExamAttemptsPage";
 import AnnouncementsPage from "../pages/admin/AnnouncementsPage/AnnouncementsPage";
+import TeacherCourseChatPage from "../pages/teacher/CourseChatPage/CourseChatPage";
+import StudentCourseChatPage from "../pages/student/CourseChatPage/CourseChatPage";
 
 
 export default function AppRouter() {
@@ -105,6 +107,7 @@ export default function AppRouter() {
                     path="courses/:courseId/students/:studentId/results/:examId"
                     element={<TeacherStudentExamAttemptsPage />}
                 />
+                <Route path="/teacher/courses/:courseId/chat" element={<TeacherCourseChatPage />} />
             </Route>
 
             <Route
@@ -130,6 +133,7 @@ export default function AppRouter() {
                 <Route path="courses/:courseId/videos" element={<StudentVideoLearningPage />} />
                 <Route path="courses/:courseId/videos/:videoId" element={<StudentVideoLearningPage />} />
                 <Route path="courses/:courseId/documents" element={<StudentDocumentsPage />} />
+                <Route path="/student/courses/:courseId/chat" element={<StudentCourseChatPage />} />
             </Route>
             <Route path="/" element={<Navigate to="/login" replace />} />
             <Route path="*" element={<Navigate to="/login" replace />} />

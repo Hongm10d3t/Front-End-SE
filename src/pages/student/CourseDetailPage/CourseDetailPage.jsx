@@ -53,6 +53,9 @@ export default function StudentCourseDetailPage() {
                 <Link className="student-back-link" to="/student/terms">
                     ← Quay lại kỳ học
                 </Link>
+                {/* <Link className="teacher-inline-link" to={`/student/courses/${courseId}/chat`}>
+                    Chat lớp học
+                </Link> */}
             </div>
 
             {loading ? (

@@ -6,6 +6,7 @@ import "./CoursesPage.css";
 
 export default function TeacherCoursesPage() {
     const { termId } = useParams();
+    const { courseId } = useParams();
 
     const [courses, setCourses] = useState([]);
     const [keyword, setKeyword] = useState("");

@@ -43,11 +43,11 @@ export default function TeacherDashboardPage() {
                 >
                     Đi tới kỳ học của tôi
                 </Link>
-                <AnnouncementList
+                {/* <AnnouncementList
                     title="Thông báo mới"
                     announcements={announcements}
                     emptyText="Hiện chưa có thông báo nào dành cho giảng viên."
-                />
+                /> */}
 
             </div>
         </div>

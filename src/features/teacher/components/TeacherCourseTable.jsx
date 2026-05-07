@@ -28,6 +28,7 @@ export default function TeacherCourseTable({ courses }) {
                         <th>Tài liệu</th>
                         <th>Question bank</th>
                         <th>Bài thi</th>
+                        {/* <th>Chat lớp</th> */}
                     </tr>
                 </thead>
 
@@ -75,6 +76,14 @@ export default function TeacherCourseTable({ courses }) {
                                 >
                                     Quản lý bài thi
                                 </Link>
+                            </td>
+                            <td>
+                                {/* <Link
+                                    className="teacher-inline-link"
+                                    to={`/teacher/courses/${course._id}/chat`}
+                                >
+                                    Chat lớp học
+                                </Link> */}
                             </td>
                         </tr>
                     ))}

@@ -50,7 +50,7 @@ export default function TeacherExamsPage() {
             await fetchData();
         } catch (error) {
             console.error(error);
-            alert("Tạo đề thi thất bại. Bạn nhập thiếu thông tin hoặc số lượng câu hỏi vượt quá ngân hàng đề");
+            alert("Tạo đề thi thất bại. Bạn nhập sai hoặc thiếu thông tin");
         } finally {
             setSubmitting(false);
         }
